@@ -1,299 +1,275 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   MapPin,
   Clock,
-  Mountain,
-  Footprints,
+  Compass,
   Star,
   ArrowRight,
-  Calendar,
-  Users,
-  Search
+  Search,
+  SlidersHorizontal,
+  CheckCircle2,
+  Globe,
+  Sparkles,
+  Users
 } from 'lucide-react'
-
-const trekData = [
-  { id: 1, name: 'Uttari Betta Sunrise Trek', location: 'Bangalore', category: 'Sunrise', duration: '1 Day', distance: '4 km', altitude: '2400 ft', difficulty: 'Easy', price: 699, image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800', rating: 4.8, highlights: ['Sunrise View', 'Jungle Trail', 'Ancient Temple'], slots: 25 },
-  { id: 2, name: 'Kudremukh Peak Expedition', location: 'Chikmagalur', category: 'Moderate', duration: '2 Days', distance: '15 km', altitude: '6200 ft', difficulty: 'Moderate', price: 2999, image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800', rating: 4.9, highlights: ['Shola Grassland', 'Waterfalls', 'Wildlife'], slots: 20 },
-  { id: 3, name: 'Netravathi Peak Challenge', location: 'Dakshina Kannada', category: 'Difficult', duration: '2 Days', distance: '12 km', altitude: '5500 ft', difficulty: 'Difficult', price: 3159, image: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800', rating: 4.7, highlights: ['Peak Summit', 'Dense Forest', 'River Crossing'], slots: 15 },
-  { id: 4, name: 'Makalidurga Night Trek', location: 'Tumkur', category: 'Easy', duration: '1 Day', distance: '6 km', altitude: '3800 ft', difficulty: 'Easy', price: 899, image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800', rating: 4.6, highlights: ['Night Trek', 'Star Gazing', 'Fort Ruins'], slots: 30 },
-  { id: 5, name: 'Kodachadri Hill Trek', location: 'Shimoga', category: 'Moderate', duration: '2 Days', distance: '10 km', altitude: '4400 ft', difficulty: 'Moderate', price: 4999, image: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800', rating: 4.9, highlights: ['Kodachadri Viewpoint', 'Forest', 'Waterfalls'], slots: 18 },
-  { id: 6, name: 'Tadiandamol Peak', location: 'Coorg', category: 'Difficult', duration: '2 Days', distance: '14 km', altitude: '5700 ft', difficulty: 'Difficult', price: 3499, image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800', rating: 4.8, highlights: ['Highest Peak in Coorg', 'Valleys', 'Mist'], slots: 15 },
-  { id: 7, name: 'Devaramane Sunrise', location: 'Tumkur', category: 'Sunrise', duration: '1 Day', distance: '5 km', altitude: '3200 ft', difficulty: 'Easy', price: 799, image: 'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=800', rating: 4.7, highlights: ['Sunrise View', 'Valley', 'Temple'], slots: 25 },
-  { id: 8, name: 'Ballarayanadurga Trek', location: 'Chikmagalur', category: 'Moderate', duration: '2 Days', distance: '18 km', altitude: '5800 ft', difficulty: 'Moderate', price: 3299, image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800', rating: 4.8, highlights: ['Rocky Trail', 'Forest', 'Cave'], slots: 12 },
-  { id: 9, name: 'Kumaraparvath Trek', location: 'Dakshina Kannada', category: 'Easy', duration: '1 Day', distance: '4 km', altitude: '2800 ft', difficulty: 'Easy', price: 599, image: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=800', rating: 4.5, highlights: ['Easy Trail', 'Green Forest', 'Viewpoint'], slots: 30 },
-  { id: 10, name: 'Bheemeswara Trek', location: 'Chikkaballapur', category: 'Nature', duration: '1 Day', distance: '5 km', altitude: '3000 ft', difficulty: 'Easy', price: 649, image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800', rating: 4.6, highlights: ['Temple', 'Hilltop', 'Nature'], slots: 25 },
-  { id: 11, name: 'Anthargange Trek', location: 'Kolar', category: 'Cave', duration: '1 Day', distance: '4 km', altitude: '2600 ft', difficulty: 'Easy', price: 599, image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800', rating: 4.5, highlights: ['Cave Exploration', 'Rocky Terrain', 'Sunset'], slots: 30 },
-  { id: 12, name: 'Kunti Betta Trek', location: 'Puttaparthi', category: 'Easy', duration: '1 Day', distance: '6 km', altitude: '3500 ft', difficulty: 'Easy', price: 749, image: 'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=800', rating: 4.7, highlights: ['Sunrise', 'Rocky Hill', 'Pyramid Peak'], slots: 20 },
-]
+import { trekData } from '../data/treksData'
 
 export default function Treks() {
-  console.log("TREKS FILE LOADED");
-  const [searchParams, setSearchParams] = useSearchParams()
-  const categoryParam = searchParams.get('category')
-  
-  const difficultyFilters = ['All', 'Easy', 'Moderate', 'Difficult']
-  const durationFilters = ['All', '1 Day', '2 Days', '3 Days']
-  
+  const [searchParams] = useSearchParams()
+  const categoryParam = searchParams.get('category') || searchParams.get('region') || 'All'
+  const searchParam = searchParams.get('search') || ''
+
+  const [search, setSearch] = useState(searchParam)
+  const [activeCategory, setActiveCategory] = useState(categoryParam)
   const [activeDifficulty, setActiveDifficulty] = useState('All')
-  const [activeDuration, setActiveDuration] = useState(categoryParam || 'All')
-  const [search,setSearch]=useState("")
+  const [activeDuration, setActiveDuration] = useState('All')
+  const [sortBy, setSortBy] = useState('popular')
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
+    if (searchParams.get('category') || searchParams.get('region')) {
+      setActiveCategory(searchParams.get('category') || searchParams.get('region'))
+    }
+    if (searchParams.get('search')) {
+      setSearch(searchParams.get('search'))
+    }
+  }, [searchParams])
+
+  const categoriesList = ['All', 'Western Ghats', 'Himalayas', 'Sahyadri', 'Sunrise', 'Kerala', 'North East']
+  const difficulties = ['All', 'Easy', 'Moderate', 'Hard', 'Himalayan']
+  const durations = ['All', '1 Day', '2 Days', '3 Days', '5+ Days']
 
   const getFilteredTreks = () => {
-  let filtered = trekData;
+    let list = [...trekData]
 
-  if (activeDifficulty !== "All") {
-    filtered = filtered.filter(
-      (t) => t.difficulty === activeDifficulty
-    );
+    if (search.trim() !== '') {
+      const q = search.toLowerCase()
+      list = list.filter(
+        t => t.name.toLowerCase().includes(q) ||
+             t.location.toLowerCase().includes(q) ||
+             t.state.toLowerCase().includes(q) ||
+             t.category.toLowerCase().includes(q)
+      )
+    }
+
+    if (activeCategory !== 'All') {
+      const catLower = activeCategory.toLowerCase()
+      list = list.filter(t => 
+        t.category.toLowerCase() === catLower ||
+        t.region.toLowerCase() === catLower ||
+        t.state.toLowerCase().includes(catLower)
+      )
+    }
+
+    if (activeDifficulty !== 'All') {
+      list = list.filter(t => t.difficulty.toLowerCase().includes(activeDifficulty.toLowerCase()))
+    }
+
+    if (activeDuration !== 'All') {
+      if (activeDuration === '5+ Days') {
+        list = list.filter(t => t.duration.includes('5') || t.duration.includes('6') || t.duration.includes('7') || t.duration.includes('8'))
+      } else {
+        list = list.filter(t => t.duration.toLowerCase().includes(activeDuration.toLowerCase()))
+      }
+    }
+
+    if (sortBy === 'price-low') {
+      list.sort((a, b) => a.price - b.price)
+    } else if (sortBy === 'price-high') {
+      list.sort((a, b) => b.price - a.price)
+    } else if (sortBy === 'rating') {
+      list.sort((a, b) => b.rating - a.rating)
+    }
+
+    return list
   }
-
-  if (activeDuration !== "All") {
-    filtered = filtered.filter(
-      (t) => t.duration === activeDuration
-    );
-  }
-
-  if (search.trim() !== "") {
-    filtered = filtered.filter(
-      (t) =>
-        t.name.toLowerCase().includes(search.toLowerCase()) ||
-        t.location.toLowerCase().includes(search.toLowerCase())
-    );
-  }
-
-  return filtered;
-};
 
   const filteredTreks = getFilteredTreks()
 
   return (
-    <div className="page">
+    <div className="page treks-page">
+      {/* Hero Section */}
       <section className="page-hero">
         <div className="hero-bg">
-          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920" alt="Treks" />
+          <img src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1920" alt="All India Treks" />
           <div className="hero-overlay"></div>
         </div>
-        <div className="page-hero-content">
-          <motion.span 
-            className="high-demand-badge"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            🗓️ Upcoming Expeditions
-          </motion.span>
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            Find Your Perfect Adventure
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            Curated treks for every skill level - from beginners to seasoned trekkers
-          </motion.p>
+        <div className="container page-hero-content text-center">
+          <span className="high-demand-badge">
+            🏔️ {trekData.length}+ All-India Expeditions
+          </span>
+          <h1>Upcoming Trek Expeditions</h1>
+          <p>
+            Explore snow peaks in the Himalayas, beach backpacking in Gokarna, fort trails in Sahyadri, Shola forests in Western Ghats, and tea ridges in Munnar & Wayanad.
+          </p>
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          <div className="filter-group">
-            <label>Duration:</label>
-            <div className="filter-buttons">
-              {durationFilters.map(filter => (
-                <button 
-                  key={filter}
-                  className={`filter-btn ${activeDuration === filter ? 'active' : ''}`}
-                  onClick={() => setActiveDuration(filter)}
-                >
-                  {filter}
-                  {filter !== 'All' && <span className="filter-count">{trekData.filter(t => t.duration === filter).length}</span>}
-                </button>
-              ))}
+      <div className="container section">
+        {/* Filter Card */}
+        <div className="filter-wrapper-card" style={{ background: "white", padding: "24px", borderRadius: "20px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
+          <div className="filter-top-bar" style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center", marginBottom: "20px" }}>
+            {/* Search Input */}
+            <div className="search-box-field" style={{ flex: 1, minWidth: "260px", position: "relative" }}>
+              <Search size={18} className="search-icon" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#64748b" }} />
+              <input
+                type="text"
+                placeholder="Search by trek name, Gokarna, Wayanad, Himalayas..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ width: "100%", padding: "12px 14px 12px 42px", borderRadius: "12px", border: "1px solid #cbd5e1" }}
+              />
+            </div>
+
+            {/* Sort By Dropdown */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <SlidersHorizontal size={16} color="#64748b" />
+              <select
+                className="filter-select"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{ padding: "12px", borderRadius: "12px", border: "1px solid #cbd5e1", background: "white" }}
+              >
+                <option value="popular">Sort: Most Popular</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+              </select>
             </div>
           </div>
 
-          <div className="filter-group">
-            <label>Difficulty:</label>
-            <div className="filter-buttons">
-              {difficultyFilters.map(filter => (
-                <button 
-                  key={filter}
-                  className={`filter-btn ${activeDifficulty === filter ? 'active' : ''}`}
-                  onClick={() => setActiveDifficulty(filter)}
-                >
-                  {filter}
-                  {filter !== 'All' && <span className="filter-count">{trekData.filter(t => t.difficulty === filter).length}</span>}
-                </button>
-              ))}
-            </div>
+          {/* Category Tabs */}
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", borderTop: "1px solid #f1f5f9", paddingTop: "16px" }}>
+            {categoriesList.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "999px",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  border: activeCategory.toLowerCase() === cat.toLowerCase() ? "none" : "1px solid #e2e8f0",
+                  background: activeCategory.toLowerCase() === cat.toLowerCase() ? "linear-gradient(135deg, #059669, #047857)" : "#f8fafc",
+                  color: activeCategory.toLowerCase() === cat.toLowerCase() ? "white" : "#475569",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
+        </div>
 
-<div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    marginBottom: "35px"
-  }}
->
-  <div
-    style={{
-      position: "relative",
-      width: "100%",
-      maxWidth: "500px"
-    }}
-  >
-    <Search
-      size={20}
-      style={{
-        position: "absolute",
-        top: "14px",
-        left: "15px",
-        color: "#888"
-      }}
-    />
+        {/* Results Counter */}
+        <div style={{ marginTop: "24px", marginBottom: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: "15px", color: "#64748b" }}>
+            Showing <strong>{filteredTreks.length}</strong> {activeCategory !== 'All' ? activeCategory : ''} expeditions
+          </span>
+          {activeCategory !== 'All' && (
+            <button onClick={() => { setActiveCategory('All'); setSearch(''); }} style={{ background: "none", border: "none", color: "#059669", fontWeight: "600", cursor: "pointer", fontSize: "13px" }}>
+              Reset Filters ✕
+            </button>
+          )}
+        </div>
 
-    <input
-      type="text"
-      placeholder="Search by trek name or location..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      style={{
-        width: "100%",
-        padding: "14px 18px 14px 45px",
-        borderRadius: "30px",
-        border: "1px solid #ddd",
-        fontSize: "16px",
-        outline: "none",
-        boxShadow: "0 5px 15px rgba(0,0,0,.08)"
-      }}
-    />
-  </div>
-</div>
-
+        {/* Treks Grid */}
+        {filteredTreks.length > 0 ? (
           <div className="treks-grid">
-            <AnimatePresence>
-              {filteredTreks.map((trek, index) => (
-                <motion.div 
-                  key={trek.id}
-                  className="trek-card"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ y: -10 }}
-                >
-                  <Link
-                    to="/trekdetails"
-                    state={{ trek }}
-                    className="trek-image"
-                  >
-                    <img src={trek.image} alt={trek.name} />
-                    <div className="trek-image-content">
-                    <h3 className="trek-image-name">{trek.name}</h3>
+            {filteredTreks.map((trek) => (
+              <motion.div
+                key={trek.id}
+                className="trek-card"
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="trek-card-image" style={{ position: "relative", height: "220px", overflow: "hidden" }}>
+                  <img src={trek.image} alt={trek.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <span className="region-tag" style={{ position: "absolute", top: "12px", left: "12px", background: "rgba(15, 23, 42, 0.85)", color: "white", padding: "4px 12px", borderRadius: "999px", fontSize: "11px", fontWeight: "700" }}>
+                    {trek.region}
+                  </span>
+                  <span className={`difficulty-tag difficulty-${trek.difficulty.toLowerCase()}`} style={{ position: "absolute", top: "12px", right: "12px", background: "#16a34a", color: "white", padding: "4px 12px", borderRadius: "999px", fontSize: "11px", fontWeight: "700" }}>
+                    {trek.difficulty}
+                  </span>
+                </div>
 
-                  <div className="trek-image-location">
-                    <MapPin size={14} />
-                    <span>{trek.location}</span>
-                  </div>
-                  </div>
-                    <div className="trek-badges">
-                      <span className="difficulty-badge">{trek.difficulty}</span>
-                      <span className="category-badge">{trek.category}</span>
-                    </div>
-                    <div className="trek-rating">
-                      <Star size={14} fill="#F59E0B" color="#F59E0B" />
-                      {trek.rating}
-                    </div>
-                    <div className="trek-slots">
-                      <Users size={14} />
-                      {trek.slots} slots left
-                      </div>
-                    <div className="trek-image-title">
-                      {trek.name}
-                    </div>
-                  </Link>
-                  
-                  <div
-                    className="trek-info"
-                    style={{
-                      background: "yellow",
-                      padding: "20px",
-                      display: "block"
-                    }}
-                  >
-                    
-                    <div className="trek-location">
-                      <MapPin size={14} />
-                      {trek.location}
-                    </div>
-                    <h3 style={{ color: "red", fontSize: "24px" }}>
-                      {trek.name}
-                    </h3>
-                    
-                   
-
-                    <div className="trek-meta">
-                      <div className="meta-item">
-                        <Clock size={14} />
-                        <span>{trek.duration}</span>
-                      </div>
-                      <div className="meta-item">
-                        <Footprints size={14} />
-                        <span>{trek.distance}</span>
-                      </div>
-                      <div className="meta-item">
-                        <Mountain size={14} />
-                        <span>{trek.altitude}</span>
-                      </div>
-                    </div>
-
-                    <div className="trek-footer">
-                      <div className="trek-price">
-                        <span className="price-label">Starting from</span>
-                        <span className="price-value">₹{trek.price}</span>
-                        <span className="price-unit">/person</span>
-                      </div>
-                      <Link
-                        to="/booking"
-                        className="btn-book-trek"
-                        style={{
-                          textDecoration: "none",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "8px"
-                        }}
-                      >
-  Book Trek
-  <ArrowRight size={16} />
-</Link>
+                <div className="trek-card-content" style={{ padding: "20px", display: "flex", flexDirection: "column", flex: 1, gap: "12px" }}>
+                  {/* Top Location & Rating */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "700", color: "#16a34a", display: "flex", alignItems: "center", gap: "4px" }}>
+                      <MapPin size={13} /> {trek.state} • {trek.location.split('(')[0]}
+                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "4px", background: "#fef3c7", color: "#d97706", padding: "2px 8px", borderRadius: "6px", fontSize: "12px", fontWeight: "700" }}>
+                      <Star size={13} fill="#F59E0B" color="#F59E0B" />
+                      <span>{trek.rating}</span>
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+
+                  {/* Title */}
+                  <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#1f2937", margin: 0, lineHeight: "1.3" }}>
+                    {trek.name}
+                  </h3>
+
+                  {/* Structured Description / Tagline Box */}
+                  <div style={{ background: "#f8fafc", padding: "10px 14px", borderRadius: "10px", borderLeft: "3px solid #16a34a" }}>
+                    <p style={{ fontSize: "13px", color: "#4b5563", margin: 0, lineHeight: "1.5", fontStyle: "italic" }}>
+                      "{trek.tagline}"
+                    </p>
+                  </div>
+
+                  {/* Meta Chips */}
+                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    <span style={{ background: "#f1f5f9", color: "#334155", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
+                      <Clock size={12} color="#16a34a" /> {trek.duration}
+                    </span>
+                    <span style={{ background: "#f1f5f9", color: "#334155", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
+                      <Compass size={12} color="#16a34a" /> {trek.distance}
+                    </span>
+                    <span style={{ background: "#f1f5f9", color: "#334155", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "600" }}>
+                      ⛰️ {trek.altitude}
+                    </span>
+                  </div>
+
+                  {/* Batch Badge */}
+                  <div style={{ fontSize: "12px", color: "#15803d", fontWeight: "700", background: "#dcfce7", padding: "6px 12px", borderRadius: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <Sparkles size={13} color="#16a34a" />
+                    <span>Next Verified Batch: {trek.upcomingBatches?.[0] || 'Upcoming'}</span>
+                  </div>
+
+                  {/* Price & Action */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "12px", borderTop: "1px solid #f1f5f9" }}>
+                    <div>
+                      <span style={{ fontSize: "12px", color: "#9ca3af", textDecoration: "line-through", marginRight: "6px" }}>₹{trek.originalPrice}</span>
+                      <strong style={{ fontSize: "20px", color: "#16a34a", fontWeight: "900" }}>₹{trek.price}</strong>
+                      <span style={{ fontSize: "11px", color: "#6b7280" }}> / person</span>
+                    </div>
+                    <Link to={`/treks/${trek.id}`} className="btn btn-primary btn-sm">
+                      View Expedition <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </div>
-      </section>
-
-      <section className="section cta-mini">
-        <div className="container">
-          <div className="cta-mini-content">
-            <h3>Can't find the right trek?</h3>
-            <p>Contact us for custom trekking packages for groups</p>
-            <button className="btn btn-primary">
-              <Calendar size={18} />
-              Contact Us
+        ) : (
+          <div className="text-center" style={{ padding: "60px 20px", background: "white", borderRadius: "20px", border: "1px solid #e2e8f0" }}>
+            <Compass size={48} color="#94a3b8" style={{ marginBottom: "16px" }} />
+            <h3>No expeditions match your search filter</h3>
+            <p style={{ color: "#64748b", marginTop: "8px" }}>Try searching for a different region, state, or click reset filters.</p>
+            <button onClick={() => { setActiveCategory('All'); setSearch(''); }} className="btn btn-primary margin-top-md">
+              View All {trekData.length} Treks
             </button>
           </div>
-        </div>
-      </section>
+        )}
+      </div>
     </div>
   )
 }

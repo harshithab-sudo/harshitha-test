@@ -1,463 +1,387 @@
-import { Link, useLocation } from "react-router-dom";
-import { MapPin, Star, Clock, Mountain, Footprints, Users } from "lucide-react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import {
+  MapPin,
+  Star,
+  Clock,
+  Compass,
+  CheckCircle2,
+  XCircle,
+  Calendar,
+  Users,
+  ChevronDown,
+  ChevronUp,
+  MessageCircle,
+  Share2,
+  ShieldCheck,
+  CheckSquare,
+  Sparkles,
+  ArrowRight,
+  Globe
+} from "lucide-react";
+import { getTrekById, getTrekBySlug, trekData } from "../data/treksData";
 
 export default function TrekDetails() {
+  const { id } = useParams();
   const { state } = useLocation();
-  const trek = state?.trek;
+  const navigate = useNavigate();
+
+  let trek = state?.trek;
+  if (!trek && id) {
+    trek = isNaN(Number(id)) ? getTrekBySlug(id) : getTrekById(id);
+  }
+  if (!trek) {
+    trek = trekData[0];
+  }
+
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedBatch, setSelectedBatch] = useState(trek.upcomingBatches?.[0] || "Sat, 2 Aug");
+  const [selectedPickup, setSelectedPickup] = useState(trek.pickupPoints?.[0]?.name || "Silk Board Junction");
+  const [guests, setGuests] = useState(1);
+  const [checkedItems, setCheckedItems] = useState({});
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [id, trek]);
 
-  if (!trek) {
-    return (
-      <div style={{ padding: "100px", textAlign: "center" }}>
-        <h1>Trek Not Found</h1>
+  const toggleCheck = (idx) => {
+    setCheckedItems(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
 
-        <Link
-          to="/treks"
-          style={{
-            color: "#16A34A",
-            textDecoration: "none",
-            fontWeight: "bold"
-          }}
-        >
-          ← Back to Treks
-        </Link>
-      </div>
-    );
-  }
+  const totalPrice = trek.price * guests;
+
+  const handleBookNow = () => {
+    navigate("/booking", {
+      state: {
+        trek,
+        selectedBatch,
+        selectedPickup,
+        guests
+      }
+    });
+  };
+
+  const similarTreks = trekData.filter(t => t.id !== trek.id).slice(0, 3);
 
   return (
-    <div>
+    <div className="page trek-details-page">
+      {/* HERO BANNER WITH UNIQUE TREK IMAGE */}
+      <div className="details-hero">
+        <img src={trek.image} alt={trek.name} className="details-hero-img" />
+        <div className="details-hero-overlay"></div>
+        <div className="container details-hero-content">
+          <div className="breadcrumbs">
+            <Link to="/">Home</Link> / <Link to="/treks">Treks</Link> / <span>{trek.name}</span>
+          </div>
 
-      {/* HERO IMAGE */}
-
-      <div
-        style={{
-          position: "relative",
-          height: "500px",
-          overflow: "hidden"
-        }}
-      >
-
-        <img
-          src={trek.image}
-          alt={trek.name}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover"
-          }}
-        />
-
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2))"
-          }}
-        />
-
-        <div
-          style={{
-            position: "absolute",
-            bottom: "50px",
-            left: "70px",
-            color: "white"
-          }}
-        >
-          <h1
-            style={{
-              fontSize: "48px",
-              marginBottom: "15px"
-            }}
-          >
-            {trek.name}
-          </h1>
-
-          <div
-            style={{
-              display: "flex",
-              gap: "25px",
-              flexWrap: "wrap",
-              fontSize: "18px"
-            }}
-          >
-            <span
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px"
-              }}
-            >
-              <Star fill="#FFD700" color="#FFD700" size={18} />
-              {trek.rating}
-            </span>
-
-            <span
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px"
-              }}
-            >
-              <MapPin size={18} />
-              {trek.location}
-            </span>
-
-            <span
-              style={{
-                background: "#16A34A",
-                padding: "6px 18px",
-                borderRadius: "25px"
-              }}
-            >
-              {trek.difficulty}
-            </span>
-
-            <span
-              style={{
-                fontWeight: "bold",
-                fontSize: "22px"
-              }}
-            >
-              ₹{trek.price}/Person
+          <div className="details-badges">
+            <span className="badge-region-tag"><Globe size={13} /> {trek.region}</span>
+            <span className="badge-difficulty">{trek.difficulty}</span>
+            <span className="badge-rating">
+              <Star fill="#F59E0B" color="#F59E0B" size={15} />
+              {trek.rating} ({trek.reviewCount} reviews)
             </span>
           </div>
-        </div>
 
+          <h1 className="details-title">{trek.name}</h1>
+          <p className="details-tagline">{trek.tagline}</p>
+
+          <div className="details-quick-meta">
+            <span><MapPin size={16} /> {trek.location}</span>
+            <span><Clock size={16} /> {trek.duration}</span>
+            <span><Compass size={16} /> {trek.distance}</span>
+            <span><Sparkles size={16} /> Altitude: {trek.altitude}</span>
+          </div>
+        </div>
       </div>
-            <div
-        style={{
-          maxWidth: "1200px",
-          margin: "50px auto",
-          padding: "0 20px"
-        }}
-      >
 
-        {/* INFORMATION CARDS */}
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-            gap: "20px",
-            marginBottom: "50px"
-          }}
-        >
-
-          <div className="info-card">
-            <Clock size={30} color="#16A34A" />
-            <h3>Duration</h3>
-            <p>{trek.duration}</p>
-          </div>
-
-          <div className="info-card">
-            <Footprints size={30} color="#16A34A" />
-            <h3>Distance</h3>
-            <p>{trek.distance}</p>
-          </div>
-
-          <div className="info-card">
-            <Mountain size={30} color="#16A34A" />
-            <h3>Altitude</h3>
-            <p>{trek.altitude}</p>
-          </div>
-
-          <div className="info-card">
-            <Users size={30} color="#16A34A" />
-            <h3>Slots Left</h3>
-            <p>{trek.slots}</p>
-          </div>
-
-        </div>
-
-
-        {/* ABOUT TREK */}
-
-        <div style={{ marginBottom: "50px" }}>
-          <h2
-            style={{
-              fontSize: "32px",
-              marginBottom: "20px",
-              color: "#0F172A"
-            }}
-          >
-            About This Trek
-          </h2>
-
-          <p
-            style={{
-              lineHeight: "1.9",
-              color: "#555",
-              fontSize: "17px"
-            }}
-          >
-            {trek.name} is one of Karnataka's most beautiful trekking
-            destinations. Experience lush green forests, breathtaking sunrise
-            views, rocky mountain trails and unforgettable landscapes. This
-            trek is suitable for adventure lovers looking to explore nature
-            while enjoying a safe and guided trekking experience.
-          </p>
-        </div>
-
-
-        {/* HIGHLIGHTS */}
-
-        <div style={{ marginBottom: "60px" }}>
-          <h2
-            style={{
-              fontSize: "32px",
-              marginBottom: "25px",
-              color: "#0F172A"
-            }}
-          >
-            Trek Highlights
-          </h2>
-
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "15px"
-            }}
-          >
-            {trek.highlights.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  background: "#E8F5E9",
-                  color: "#16A34A",
-                  padding: "12px 20px",
-                  borderRadius: "30px",
-                  fontWeight: "600"
-                }}
-              >
-                ✓ {item}
-              </div>
-            ))}
-          </div>
-        </div>
-                {/* THINGS TO CARRY */}
-
-        <div style={{ marginBottom: "60px" }}>
-          <h2
-            style={{
-              fontSize: "32px",
-              marginBottom: "25px",
-              color: "#0F172A"
-            }}
-          >
-            Things To Carry
-          </h2>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-              gap: "20px"
-            }}
-          >
-            {[
-              "🎒 Backpack",
-              "🥾 Trek Shoes",
-              "💧 Water Bottle",
-              "🧥 Jacket",
-              "🕶 Sunglasses",
-              "🧢 Cap",
-              "🔦 Torch",
-              "🍫 Energy Snacks"
-            ].map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  background: "#fff",
-                  padding: "20px",
-                  borderRadius: "15px",
-                  textAlign: "center",
-                  boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-                  fontWeight: "600"
-                }}
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-        {/* ITINERARY */}
-
-        <div style={{ marginBottom: "70px" }}>
-          <h2
-            style={{
-              fontSize: "32px",
-              marginBottom: "30px",
-              color: "#0F172A"
-            }}
-          >
-            Trek Itinerary
-          </h2>
-
-          <div
-            style={{
-              borderLeft: "4px solid #16A34A",
-              marginLeft: "20px",
-              paddingLeft: "30px"
-            }}
-          >
-
-            {[
-              "🚌 11:00 PM - Departure from Bangalore",
-              "🌄 05:30 AM - Reach Base Camp",
-              "🥾 06:00 AM - Start Trek",
-              "🌅 07:15 AM - Sunrise Point",
-              "📸 08:00 AM - Photography & Relax",
-              "🍳 09:00 AM - Breakfast",
-              "🏠 Return Journey"
-            ].map((step, index) => (
-              <div
-                key={index}
-                style={{
-                  marginBottom: "30px",
-                  position: "relative"
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    left: "-40px",
-                    top: "5px",
-                    width: "18px",
-                    height: "18px",
-                    borderRadius: "50%",
-                    background: "#16A34A"
-                  }}
-                />
-
-                <p
-                  style={{
-                    fontSize: "17px",
-                    color: "#444",
-                    fontWeight: "500"
-                  }}
+      <div className="container section">
+        <div className="details-layout-grid">
+          {/* MAIN CONTENT AREA */}
+          <div className="details-main-content">
+            {/* TABS NAVIGATION */}
+            <div className="details-tabs-bar">
+              {[
+                { id: "overview", label: "Overview & Highlights" },
+                { id: "itinerary", label: `Itinerary (${trek.itinerary?.length || 0})` },
+                { id: "inclusions", label: "Inclusions" },
+                { id: "pickup", label: "Pickups & Travel" },
+                { id: "packing", label: "Things to Carry" },
+                { id: "faqs", label: "FAQs & Policies" },
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  className={`tab-link ${activeTab === tab.id ? "active" : ""}`}
+                  onClick={() => setActiveTab(tab.id)}
                 >
-                  {step}
-                </p>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
+            {/* OVERVIEW TAB */}
+            {activeTab === "overview" && (
+              <div className="tab-pane">
+                <h3>About {trek.name}</h3>
+                <p className="trek-overview-text">{trek.overview}</p>
+
+                <h4 className="margin-top-lg">Key Expedition Highlights</h4>
+                <div className="highlights-grid">
+                  {trek.highlights?.map((h, i) => (
+                    <div key={i} className="highlight-card">
+                      <CheckCircle2 size={20} color="#10B981" />
+                      <span>{h}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Key Metrics Dashboard */}
+                <div className="metrics-box margin-top-lg">
+                  <div className="metric-col">
+                    <span className="metric-label">Trek Distance</span>
+                    <span className="metric-val">{trek.distance}</span>
+                  </div>
+                  <div className="metric-col">
+                    <span className="metric-label">Peak Altitude</span>
+                    <span className="metric-val">{trek.altitude}</span>
+                  </div>
+                  <div className="metric-col">
+                    <span className="metric-label">Region</span>
+                    <span className="metric-val">{trek.region}</span>
+                  </div>
+                  <div className="metric-col">
+                    <span className="metric-label">Difficulty</span>
+                    <span className="metric-val">{trek.difficulty}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ITINERARY TAB */}
+            {activeTab === "itinerary" && (
+              <div className="tab-pane">
+                <h3>Day-by-Day Timeline Itinerary</h3>
+                <p className="subtext">Hour-by-hour itinerary designed for maximum safety, comfort, and breathtaking views.</p>
+
+                <div className="itinerary-timeline">
+                  {trek.itinerary?.map((item, idx) => (
+                    <div key={idx} className="timeline-item">
+                      <div className="timeline-marker">
+                        <span>{idx + 1}</span>
+                      </div>
+                      <div className="timeline-content">
+                        <span className="time-badge"><Clock size={13} /> {item.time}</span>
+                        <h4>{item.title}</h4>
+                        <p>{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* INCLUSIONS & EXCLUSIONS TAB */}
+            {activeTab === "inclusions" && (
+              <div className="tab-pane">
+                <h3>What is Included & Excluded</h3>
+                <div className="inc-exc-grid margin-top-md">
+                  <div className="inc-box">
+                    <h4 className="inc-title"><CheckCircle2 size={20} color="#10B981" /> What’s Included</h4>
+                    <ul>
+                      {trek.inclusions?.map((inc, i) => (
+                        <li key={i}><CheckCircle2 size={16} color="#10B981" /> {inc}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="exc-box">
+                    <h4 className="exc-title"><XCircle size={20} color="#EF4444" /> What’s Excluded</h4>
+                    <ul>
+                      {trek.exclusions?.map((exc, i) => (
+                        <li key={i}><XCircle size={16} color="#EF4444" /> {exc}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* PICKUP LOCATIONS TAB */}
+            {activeTab === "pickup" && (
+              <div className="tab-pane">
+                <h3>Boarding Locations & Travel Schedule</h3>
+                <p className="subtext">Boarding locations with exact timings for this expedition.</p>
+
+                <div className="pickups-list margin-top-md">
+                  {trek.pickupPoints?.map((pickup, i) => (
+                    <div key={i} className="pickup-item-card">
+                      <div className="pickup-icon">
+                        <MapPin size={22} color="#10B981" />
+                      </div>
+                      <div className="pickup-details">
+                        <h4>{pickup.name}</h4>
+                        <p>Scheduled Boarding Time: <strong>{pickup.time}</strong></p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* PACKING CHECKLIST TAB */}
+            {activeTab === "packing" && (
+              <div className="tab-pane">
+                <h3>Interactive Packing Checklist</h3>
+                <p className="subtext">Check off items as you pack your backpack!</p>
+
+                <div className="checklist-grid margin-top-md">
+                  {trek.thingsToCarry?.map((item, i) => (
+                    <div
+                      key={i}
+                      className={`checklist-item ${checkedItems[i] ? "checked" : ""}`}
+                      onClick={() => toggleCheck(i)}
+                    >
+                      <CheckSquare size={18} color={checkedItems[i] ? "#10B981" : "#94A3B8"} />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* FAQS & POLICIES TAB */}
+            {activeTab === "faqs" && (
+              <div className="tab-pane">
+                <h3>Frequently Asked Questions & Policy</h3>
+                <div className="faqs-list margin-top-md">
+                  {trek.faqs?.map((f, i) => (
+                    <div key={i} className="faq-box-simple">
+                      <h4>Q: {f.q}</h4>
+                      <p>A: {f.a}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="policy-card margin-top-lg">
+                  <h4>Cancellation & Refund Policy</h4>
+                  <ul>
+                    <li>100% refund or credit voucher if cancelled 7+ days before trek date.</li>
+                    <li>50% voucher if cancelled between 3 to 6 days before trek date.</li>
+                    <li>No refund for cancellations within 48 hours of departure.</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* STICKY BOOKING SIDEBAR */}
+          <div className="details-sidebar">
+            <div className="sticky-booking-card">
+              <div className="card-price-header">
+                <div>
+                  <span className="price-label">Price Per Trekker</span>
+                  <div className="price-display">
+                    <span className="curr-price">₹{trek.price}</span>
+                    <span className="old-price">₹{trek.originalPrice}</span>
+                  </div>
+                </div>
+                <span className="save-badge">Save ₹{trek.originalPrice - trek.price}</span>
+              </div>
+
+              {/* Batch Date Selector */}
+              <div className="sidebar-field">
+                <label><Calendar size={16} /> Select Upcoming Batch Date</label>
+                <select
+                  value={selectedBatch}
+                  onChange={(e) => setSelectedBatch(e.target.value)}
+                >
+                  {trek.upcomingBatches?.map((b, i) => (
+                    <option key={i} value={b}>{b}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Boarding Point Selector */}
+              <div className="sidebar-field">
+                <label><MapPin size={16} /> Select Boarding Point</label>
+                <select
+                  value={selectedPickup}
+                  onChange={(e) => setSelectedPickup(e.target.value)}
+                >
+                  {trek.pickupPoints?.map((p, i) => (
+                    <option key={i} value={p.name}>{p.name} ({p.time})</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Guests Selector */}
+              <div className="sidebar-field">
+                <label><Users size={16} /> Number of Trekkers</label>
+                <div className="guest-counter">
+                  <button onClick={() => setGuests(Math.max(1, guests - 1))}>-</button>
+                  <span>{guests} {guests === 1 ? 'Person' : 'People'}</span>
+                  <button onClick={() => setGuests(guests + 1)}>+</button>
+                </div>
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="sidebar-total-box">
+                <div className="total-row">
+                  <span>Base Fare ({guests} x ₹{trek.price})</span>
+                  <span>₹{totalPrice}</span>
+                </div>
+                <div className="total-row main-total">
+                  <span>Total Amount</span>
+                  <span>₹{totalPrice}</span>
+                </div>
+              </div>
+
+              {/* Book Action */}
+              <button className="btn btn-primary btn-block btn-lg" onClick={handleBookNow}>
+                Proceed to Book Seat
+              </button>
+
+              {/* WhatsApp Quick Ask */}
+              <a
+                href={`https://wa.me/919876543210?text=Hi!%20I%20want%20to%20inquire%20about%20booking%20${encodeURIComponent(trek.name)}%20for%20${encodeURIComponent(selectedBatch)}.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline-whatsapp btn-block margin-top-sm"
+              >
+                <MessageCircle size={18} /> Inquire via WhatsApp
+              </a>
+
+              <div className="sidebar-trust-footer">
+                <ShieldCheck size={16} color="#10B981" />
+                <span>100% Instant Confirmation & Safe Payment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SIMILAR TREKS */}
+        <div className="margin-top-xl">
+          <h3>Similar Expeditions You Might Like</h3>
+          <div className="treks-grid margin-top-md">
+            {similarTreks.map(st => (
+              <div key={st.id} className="trek-card">
+                <div className="trek-card-media">
+                  <img src={st.image} alt={st.name} />
+                  <span className="badge-difficulty">{st.difficulty}</span>
+                </div>
+                <div className="trek-card-body">
+                  <span className="trek-location"><MapPin size={14} /> {st.location}</span>
+                  <h4 className="trek-title">{st.name}</h4>
+                  <div className="trek-card-footer">
+                    <span className="price-main">₹{st.price}</span>
+                    <Link to={`/treks/${st.id}`} className="btn btn-outline-sm">View</Link>
+                  </div>
+                </div>
               </div>
             ))}
-
           </div>
         </div>
-                {/* INCLUSIONS & EXCLUSIONS */}
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))",
-            gap: "30px",
-            marginBottom: "60px"
-          }}
-        >
-
-          <div
-            style={{
-              background: "#F0FDF4",
-              padding: "30px",
-              borderRadius: "20px"
-            }}
-          >
-            <h2 style={{ color: "#16A34A", marginBottom: "20px" }}>
-              ✅ Inclusions
-            </h2>
-
-            <ul style={{ lineHeight: "2" }}>
-              <li>Transportation</li>
-              <li>Experienced Trek Leader</li>
-              <li>Forest Entry Permit</li>
-              <li>Breakfast</li>
-              <li>Basic First Aid</li>
-            </ul>
-          </div>
-
-          <div
-            style={{
-              background: "#FEF2F2",
-              padding: "30px",
-              borderRadius: "20px"
-            }}
-          >
-            <h2 style={{ color: "#DC2626", marginBottom: "20px" }}>
-              ❌ Exclusions
-            </h2>
-
-            <ul style={{ lineHeight: "2" }}>
-              <li>Lunch & Dinner</li>
-              <li>Personal Expenses</li>
-              <li>Travel Insurance</li>
-              <li>Anything not mentioned above</li>
-            </ul>
-          </div>
-
-        </div>
-
-
-        {/* BOOK NOW */}
-
-        <div
-          style={{
-            background: "#16A34A",
-            color: "white",
-            borderRadius: "25px",
-            padding: "40px",
-            textAlign: "center",
-            marginBottom: "80px"
-          }}
-        >
-
-          <h2
-            style={{
-              fontSize: "34px",
-              marginBottom: "15px"
-            }}
-          >
-            Ready For Your Adventure?
-          </h2>
-
-          <p
-            style={{
-              marginBottom: "30px",
-              fontSize: "18px"
-            }}
-          >
-            Reserve your slot today and experience one of Karnataka's most beautiful treks.
-          </p>
-
-          <Link
-            to="/booking"
-            state={{ trek }}
-            style={{
-              display: "inline-block",
-              background: "white",
-              color: "#16A34A",
-              padding: "16px 35px",
-              borderRadius: "12px",
-              textDecoration: "none",
-              fontWeight: "700",
-              fontSize: "18px"
-            }}
-          >
-            Book This Trek →
-          </Link>
-
-        </div>
-
       </div>
-
     </div>
   );
 }

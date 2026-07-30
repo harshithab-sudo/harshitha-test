@@ -1,284 +1,162 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Phone, Mail, MapPin, Clock, Send, MessageCircle, Calendar, ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useState } from "react";
+import { Phone, Mail, MapPin, MessageCircle, Send, CheckCircle2, Clock } from "lucide-react";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' })
-  const [submitted, setSubmitted] = useState(false)
+  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "Upcoming Trek Query",
+    message: ""
+  });
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    setSubmitted(true)
-  }
-
-  const contactInfo = [
-    { icon: Phone, title: 'Phone', details: ['+91 98765 43210', '+91 98765 43211'] },
-    { icon: Mail, title: 'Email', details: ['info@nbtrekkers.com', 'bookings@nbtrekkers.com'] },
-    { icon: MapPin, title: 'Address', details: ['Bangalore, Karnataka', 'India'] },
-    { icon: Clock, title: 'Hours', details: ['Mon-Sat: 9AM - 7PM', 'Sunday: 10AM - 5PM'] },
-  ]
+    e.preventDefault();
+    setSubmitted(true);
+  };
 
   return (
-    <div className="page">
+    <div className="page contact-page">
+      {/* Hero with distinct high-res mountain peak sunset photo */}
       <section className="page-hero">
         <div className="hero-bg">
-          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920" alt="Contact" />
+          <img src="https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=1920" alt="Contact Us" />
           <div className="hero-overlay"></div>
         </div>
-        <div className="page-hero-content">
-          <motion.span 
-            className="high-demand-badge"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            💬 We're Here to Help
-          </motion.span>
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            Contact Us
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            Have questions? We'd love to hear from you
-          </motion.p>
+        <div className="container page-hero-content text-center">
+          <span className="high-demand-badge">📞 We Are Available 7 Days A Week</span>
+          <h1>Get In Touch</h1>
+          <p>Have questions about upcoming Pan-India batches or custom corporate outings? We are here to help!</p>
         </div>
       </section>
 
-      {/* Contact Info */}
-      <section className="section">
-        <div className="container">
-          <div className="contact-grid">
-            <div className="contact-info-section">
-              <motion.div 
-                className="section-header-left"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                <h2>Get In Touch</h2>
-                <p>Have questions about treks? Want to book a custom trip? We're here to help!</p>
-              </motion.div>
+      <div className="container section">
+        <div className="contact-grid">
+          {/* LEFT CONTACT INFO */}
+          <div className="contact-info-column">
+            <h2>Reach NB Trekkers</h2>
+            <p className="margin-top-xs">Call, WhatsApp, or drop by our Bangalore office. Our team responds promptly.</p>
 
-              <div className="contact-info-grid">
-                {contactInfo.map((info, index) => (
-                  <motion.div 
-                    key={index}
-                    className="contact-info-item"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                  >
-                    <div className="contact-info-icon">
-                      <info.icon size={24} />
-                    </div>
-                    <div>
-                      <h4>{info.title}</h4>
-                      {info.details.map((d, i) => (
-                        <p key={i}>{d}</p>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
+            <div className="contact-cards-list margin-top-md">
+              <a href="tel:+919876543210" className="contact-detail-card">
+                <div className="icon-wrap"><Phone size={22} color="#10B981" /></div>
+                <div>
+                  <h4>Phone Call</h4>
+                  <p>+91 98765 43210 / +91 91234 56789</p>
+                  <span className="sub-note">Available 8 AM - 10 PM IST</span>
+                </div>
+              </a>
+
+              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="contact-detail-card">
+                <div className="icon-wrap"><MessageCircle size={22} color="#10B981" /></div>
+                <div>
+                  <h4>WhatsApp Quick Chat</h4>
+                  <p>+91 98765 43210</p>
+                  <span className="sub-note">Instant response within 5 mins</span>
+                </div>
+              </a>
+
+              <a href="mailto:info@nbtrekkers.com" className="contact-detail-card">
+                <div className="icon-wrap"><Mail size={22} color="#10B981" /></div>
+                <div>
+                  <h4>Email Us</h4>
+                  <p>info@nbtrekkers.com</p>
+                </div>
+              </a>
+
+              <div className="contact-detail-card">
+                <div className="icon-wrap"><MapPin size={22} color="#10B981" /></div>
+                <div>
+                  <h4>Bangalore Head Office</h4>
+                  <p>#42, 10th Main, Indiranagar 1st Stage, Bangalore, Karnataka 560038</p>
+                </div>
               </div>
             </div>
+          </div>
 
-            <motion.div 
-              className="contact-form-section"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="contact-form-card">
-                <h3>Send Us a Message</h3>
-                {submitted ? (
-                  <div className="form-success">
-                    <MessageCircle size={48} />
-                    <h4>Thank You!</h4>
-                    <p>We'll get back to you soon.</p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                      <label>Name</label>
-                      <input 
-                        type="text" 
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Email</label>
-                      <input 
-                        type="email" 
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Phone</label>
-                      <input 
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        placeholder="+91 98765 43210"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Message</label>
-                      <textarea 
-                        required
-                        value={formData.message}
-                        onChange={(e) => setFormData({...formData, message: e.target.value})}
-                        placeholder="Tell us about your trekking plans..."
-                        rows="4"
-                      />
-                    </div>
-                    <button type="submit" className="btn btn-primary btn-full">
-                      <Send size={18} />
-                      Send Message
-                    </button>
-                  </form>
-                )}
+          {/* RIGHT CONTACT FORM */}
+          <div className="contact-form-column">
+            {submitted ? (
+              <div className="contact-success-card">
+                <CheckCircle2 size={54} color="#10B981" />
+                <h3>Message Sent Successfully!</h3>
+                <p>Thank you <strong>{formData.name}</strong>! Our trek coordinator will get back to you on <strong>{formData.phone || formData.email}</strong> shortly.</p>
+                <button className="btn btn-primary margin-top-md" onClick={() => setSubmitted(false)}>
+                  Send Another Message
+                </button>
               </div>
-            </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="contact-form-card">
+                <h3>Send Us A Message</h3>
+
+                <div className="form-group margin-top-md">
+                  <label>Your Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Ramesh Hegde"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+
+                <div className="form-grid margin-top-md">
+                  <div className="form-group">
+                    <label>Phone / WhatsApp *</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 9876543210"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Email Address</label>
+                    <input
+                      type="email"
+                      placeholder="ramesh@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group margin-top-md">
+                  <label>Subject</label>
+                  <select
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  >
+                    <option>Upcoming Trek Query</option>
+                    <option>Booking Confirmation Assistance</option>
+                    <option>Corporate / Custom Group Quote</option>
+                    <option>Cancellation / Refund</option>
+                  </select>
+                </div>
+
+                <div className="form-group margin-top-md">
+                  <label>Message *</label>
+                  <textarea
+                    rows="4"
+                    required
+                    placeholder="Write your question or request details here..."
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  ></textarea>
+                </div>
+
+                <button type="submit" className="btn btn-primary btn-block btn-lg margin-top-md">
+                  <span>Send Message</span>
+                  <Send size={16} />
+                </button>
+              </form>
+            )}
           </div>
         </div>
-      </section>
-
-      {/* Quick Actions */}
-      <section className="section bg-alt">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2>Quick Actions</h2>
-            <p>Choose how you'd like to connect with us</p>
-          </motion.div>
-
-          <div className="quick-actions-grid">
-            <motion.div 
-              className="quick-action-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <Calendar size={40} />
-              <h3>Book a Trek</h3>
-              <p>Browse upcoming treks and book your adventure</p>
-              <button className="btn btn-primary">
-                View Treks
-                <ArrowRight size={18} />
-              </button>
-            </motion.div>
-
-            <motion.div 
-              className="quick-action-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <MessageCircle size={40} />
-              <h3>WhatsApp Us</h3>
-              <p>Get quick responses on WhatsApp</p>
-              <a href="https://wa.me/919876543210" className="btn btn-primary">
-                Chat Now
-                <ArrowRight size={18} />
-              </a>
-            </motion.div>
-
-            <motion.div 
-              className="quick-action-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <Phone size={40} />
-              <h3>Call Us</h3>
-              <p>Speak directly with our team</p>
-              <a href="tel:+919876543210" className="btn btn-primary">
-                Call Now
-                <ArrowRight size={18} />
-              </a>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Preview */}
-      <section className="section">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2>Frequently Asked Questions</h2>
-            <p>Quick answers to common questions</p>
-          </motion.div>
-
-          <div className="faq-grid">
-            <motion.div 
-              className="faq-item"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <h4>What is included in the trek cost?</h4>
-              <p>Transport, meals, guide fees, entry tickets, and safety equipment are included. Personal expenses are extra.</p>
-            </motion.div>
-            <motion.div 
-              className="faq-item"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <h4>What is the cancellation policy?</h4>
-              <p>Full refund if cancelled 7+ days before trek, 50% refund for 3-6 days, no refund for less than 3 days.</p>
-            </motion.div>
-            <motion.div 
-              className="faq-item"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <h4>Do I need prior trekking experience?</h4>
-              <p>No! We have treks for all skill levels. Easy treks are perfect for beginners.</p>
-            </motion.div>
-            <motion.div 
-              className="faq-item"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <h4>What should I carry?</h4>
-              <p>Comfortable shoes, water bottle, rain jacket, flashlight, and personal medications. Full list provided after booking.</p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
-  )
+  );
 }

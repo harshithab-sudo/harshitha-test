@@ -1,61 +1,87 @@
 import { Link } from 'react-router-dom'
-import { Mountain, MapPin, Phone, Mail } from 'lucide-react'
+import { Mountain, MapPin, Phone, Mail, MessageCircle, ShieldCheck, Heart, ArrowRight } from 'lucide-react'
 
-export default function Footer() {
+export default function Footer({ onOpenCustomModal }) {
   return (
     <footer className="footer">
+      {/* Community / WhatsApp Callout Bar */}
+      <div className="footer-community-banner">
+        <div className="container community-content">
+          <div className="community-info">
+            <MessageCircle size={32} color="#10B981" />
+            <div>
+              <h3>Join Karnataka’s #1 Trekking Community!</h3>
+              <p>Get weekly trek updates, sunrise alerts, early bird discounts & weekend slot notifications on WhatsApp.</p>
+            </div>
+          </div>
+          <a
+            href="https://wa.me/919876543210?text=Hi!%20I%20want%20to%20join%20the%20NB%20Trekkers%20WhatsApp%20Community."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-whatsapp"
+          >
+            <MessageCircle size={18} /> Join WhatsApp Group
+          </a>
+        </div>
+      </div>
+
       <div className="container">
         <div className="footer-grid">
+          {/* Brand Info */}
           <div className="footer-brand">
             <Link to="/" className="logo">
               <div className="logo-icon">
                 <Mountain size={24} color="white" />
               </div>
-              <span className="logo-text">Namma Bengaluru <span className="logo-highlight">Trekkers</span></span>
+              <div className="logo-text-group">
+                <span className="logo-text">NB <span className="logo-highlight">TREKKERS</span></span>
+                <span className="logo-subtext">Namma Bengaluru Trekkers</span>
+              </div>
             </Link>
             <p className="brand-desc">
-              Your trusted companion for exploring the beautiful trails of Karnataka. 
-              We organize safe, fun, and memorable trekking experiences for all skill levels.
+              Your premier adventure companion for exploring Karnataka’s Western Ghats, sunrise peaks, and pristine beach trails. We prioritize safety, eco-friendly trekking, and unforgettable memories for solo & group adventurers.
             </p>
-            <div className="social-links">
-              <a href="#" className="social-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.955 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              </a>
-              <a href="#" className="social-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-              </a>
-              <a href="#" className="social-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              </a>
+            <div className="trust-pills">
+              <span className="trust-pill"><ShieldCheck size={14} /> Certified Trek Leads</span>
+              <span className="trust-pill"><Heart size={14} /> 15,000+ Trekkers</span>
             </div>
           </div>
 
+          {/* Quick Links */}
           <div className="footer-col">
             <h4>Quick Links</h4>
             <div className="footer-links">
               <Link to="/">Home</Link>
               <Link to="/treks">Upcoming Treks</Link>
+              <Link to="/gallery">Adventure Gallery</Link>
               <Link to="/about">About Us</Link>
-              <Link to="/contact">Contact</Link>
+              <Link to="/contact">Contact & Location</Link>
+              <button onClick={onOpenCustomModal} className="footer-text-btn">
+                Corporate / Custom Trips
+              </button>
             </div>
           </div>
 
+          {/* Featured Treks */}
           <div className="footer-col">
-            <h4>Popular Treks</h4>
+            <h4>Popular Expeditions</h4>
             <div className="footer-links">
-              <a href="#">Kudremukh Trek</a>
-              <a href="#">Netravathi Peak</a>
-              <a href="#">Kodachadri Trek</a>
-              <a href="#">Tadiandamol</a>
+              <Link to="/treks/1">Uttari Betta Sunrise</Link>
+              <Link to="/treks/2">Kudremukh Peak Trek</Link>
+              <Link to="/treks/3">Netravathi Peak</Link>
+              <Link to="/treks/4">Skandagiri Night Trek</Link>
+              <Link to="/treks/5">Kodachadri & Waterfalls</Link>
+              <Link to="/treks/7">Gokarna Beach Camping</Link>
             </div>
           </div>
 
+          {/* Contact Details */}
           <div className="footer-col">
-            <h4>Contact Us</h4>
+            <h4>Reach Us</h4>
             <div className="contact-info">
               <a href="tel:+919876543210" className="contact-item">
                 <Phone size={18} />
-                <span>+91 98765 43210</span>
+                <span>+91 98765 43210 / +91 91234 56789</span>
               </a>
               <a href="mailto:info@nbtrekkers.com" className="contact-item">
                 <Mail size={18} />
@@ -63,15 +89,22 @@ export default function Footer() {
               </a>
               <div className="contact-item">
                 <MapPin size={18} />
-                <span>Bangalore, Karnataka</span>
+                <span>#42, 10th Main, Indiranagar 1st Stage, Bangalore, Karnataka 560038</span>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Bottom copyright bar */}
         <div className="footer-bottom">
-          <p>&copy; 2026 Namma Bengaluru Trekkers. All rights reserved.</p>
-          <p className="tagline">Explore. Trek. Discover.</p>
+          <p>&copy; {new Date().getFullYear()} Namma Bengaluru Trekkers (NB Trekkers). All rights reserved.</p>
+          <div className="footer-bottom-links">
+            <Link to="/about">Privacy Policy</Link>
+            <span>•</span>
+            <Link to="/contact">Terms & Cancellation Policy</Link>
+            <span>•</span>
+            <span className="tagline">Explore. Trek. Discover.</span>
+          </div>
         </div>
       </div>
     </footer>
